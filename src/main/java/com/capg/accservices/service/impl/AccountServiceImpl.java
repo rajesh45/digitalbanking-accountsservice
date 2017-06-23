@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.capg.accservices.dao.AccountDao;
 import com.capg.accservices.dao.TransactionDao;
@@ -44,6 +45,7 @@ public class AccountServiceImpl implements AccountService{
 	}
 
 	@Override
+	@Transactional(rollbackFor=Exception.class)
 	public void depositeAmount(Integer accountNo, Double amount) {
 		System.out.println("REQUEST IN SERVICE");
 		Account account = accountDao.findByAccountNo(accountNo);

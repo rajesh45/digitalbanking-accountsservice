@@ -19,8 +19,8 @@ RUN git clone https://github.com/caprepo/digitalbanking-accountsservice.git
 RUN cd /digitalbanking-accountsservice
 
 RUN mvn -f /digitalbanking-accountsservice/pom.xml clean install -DskipTests
-
+COPY newrelic/ /opt/
 EXPOSE 8090
 EXPOSE 6379
 
-ENTRYPOINT ["a8sidecar", "--register", "--supervise", "java", "-jar", "-Dspring.profiles.active=docker", "/digitalbanking-accountsservice/target/accountservices-1.0.war"]
+ENTRYPOINT ["a8sidecar", "--register", "--supervise", "java", "-jar", "-Dnewrelic-config-file=/opt/newrelic.yml", "-javaagent:/opt/newrelic.jar", "-Dspring.profiles.active=docker", "/digitalbanking-accountsservice/target/accountservices-1.0.war"]

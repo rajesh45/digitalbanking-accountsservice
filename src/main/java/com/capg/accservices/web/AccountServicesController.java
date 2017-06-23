@@ -7,10 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.capg.accservices.model.Account;
@@ -59,6 +64,22 @@ public class AccountServicesController {
 		return "Sucess";
     }
 	
+	//Dummy
+	
+	@RequestMapping(value="/accservices/testaccountwithdraw",method = RequestMethod.POST)
+    public String testaccountwithdraw(@RequestBody MultiValueMap<String, String> map){
+		
+		System.out.println("================");
+		System.out.println("REQUEST MAPPED INSIDE CONTROLLER "+","+map.get("SavingsAccountNo").get(0));
+		System.out.println("REQUEST MAPPED INSIDE CONTROLLER "+","+map.get("DebitAmount").get(0));		
+		
+		accountService.withdrawAmount(Integer.parseInt(map.get("SavingsAccountNo").get(0)), Double.parseDouble(map.get("DebitAmount").get(0)));
+		
+		System.out.println("---------------");
+		return "TXT Success!";
+    }
+	
+	@Transactional(rollbackFor=Exception.class)
 	@RequestMapping(value="/accservices/{accountNum}/{startDate}/{endDate}/getRecentTransactions"
 			,method = RequestMethod.POST)
 	public List<Transaction> getRecentTransactions(@PathVariable Integer accountNum
