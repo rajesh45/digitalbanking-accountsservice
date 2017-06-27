@@ -14,6 +14,7 @@ public interface AccountService {
 	public List<Account> getCustomerAccounts(Integer customerId);
 	public Account getAccountDetailsById(Integer accountId);
 	public void depositeAmount(Integer accountNo,Double amount) ;
+	public double withdrawBillAmountandDepositCC(Integer accountNo,Double amount,Long cardNo,Double payableAmount) ;	
 	public double withdrawAmount(Integer accountNo,Double amount) ;
 	public List<Transaction> getRecentTransactions(Integer accountNum, String startDate, String endDate);
 }
