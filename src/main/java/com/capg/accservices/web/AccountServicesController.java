@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.support.StaticApplicationContext;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -67,13 +68,15 @@ public class AccountServicesController {
 	//Dummy
 	
 	@RequestMapping(value="/accservices/testaccountwithdraw",method = RequestMethod.POST)
+	@Transactional(rollbackFor=Exception.class)
     public String testaccountwithdraw(@RequestBody MultiValueMap<String, String> map){
 		
 		System.out.println("================");
 		System.out.println("REQUEST MAPPED INSIDE CONTROLLER "+","+map.get("SavingsAccountNo").get(0));
 		System.out.println("REQUEST MAPPED INSIDE CONTROLLER "+","+map.get("DebitAmount").get(0));		
+		System.out.println("REQUEST MAPPED INSIDE CREDIT CARD PAYMENT CONTROLLER" +map.get("CreditCardNo")+","+map.get("CreditAmount"));
 		
-		accountService.withdrawAmount(Integer.parseInt(map.get("SavingsAccountNo").get(0)), Double.parseDouble(map.get("DebitAmount").get(0)));
+		accountService.withdrawBillAmountandDepositCC(Integer.parseInt(map.get("SavingsAccountNo").get(0)), Double.parseDouble(map.get("DebitAmount").get(0)),Long.parseLong(map.get("CreditCardNo").get(0)), Double.parseDouble(map.get("CreditAmount").get(0)));
 		
 		System.out.println("---------------");
 		return "TXT Success!";

@@ -15,6 +15,7 @@
 	</parent>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<docker.image.prefix>caprepo</docker.image.prefix>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -89,41 +90,27 @@
 			<version>2.4.0</version>
 		</dependency>
 	</dependencies>
-	<profiles>
-		<!-- The configuration of the production profile -->
-		<profile>
-			<id>dev</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-				<property>
-					<name>env</name>
-					<value>dev</value>
-				</property>
-			</activation>
-			<properties>
-				<build.profile.id>dev</build.profile.id>
-			</properties>
-		</profile>
-		<!-- The configuration of the docking profile -->
-		<profile>
-			<id>docker</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-				<property>
-					<name>env</name>
-					<value>docker</value>
-				</property>
-			</activation>
-			<properties>
-				<build.profile.id>docker</build.profile.id>
-			</properties>
-		</profile>
-	</profiles>
+	
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			
+			<plugin> 
+				<groupId>com.spotify</groupId> 
+				<artifactId>docker-maven-plugin</artifactId> 
+				<version>0.4.11</version> 
+				<configuration> 
+					<imageName>${docker.image.prefix}/${project.artifactId}</imageName> 
+					<dockerDirectory>src/main/docker</dockerDirectory> 
+					<resources> <resource>
+					<targetPath>/</targetPath> 
+					<directory>${project.build.directory}</directory> 
+					<include>${project.build.finalName}.war</include> 
+					</resource> </resources> 
+				</configuration> 
 			</plugin>
 
 		</plugins>

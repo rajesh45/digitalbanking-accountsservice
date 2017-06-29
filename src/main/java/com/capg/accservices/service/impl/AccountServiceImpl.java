@@ -10,14 +10,25 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import com.capg.accservices.dao.AccountDao;
 import com.capg.accservices.dao.TransactionDao;
 import com.capg.accservices.model.Account;
 import com.capg.accservices.model.Transaction;
 import com.capg.accservices.service.AccountService;
+
 
 @Service
 public class AccountServiceImpl implements AccountService{
@@ -63,6 +74,59 @@ public class AccountServiceImpl implements AccountService{
 	}
 
 	@Override
+	@Transactional(rollbackFor=Exception.class)
+	public double withdrawBillAmountandDepositCC(Integer accountNo, Double amount,Long cardNo,Double payableAmount) {
+		System.out.println("REQUEST IN withdrawBillAmountandDepositCC SERVICE");
+		Account account = accountDao.findByAccountNo(accountNo);
+		Transaction transaction =new Transaction();
+		if (amount > account.getAccountBalance()) {
+			return 0.0D;
+		}else {
+			Double newBalance = account.getAccountBalance() - amount;
+			account.setAccountBalance(newBalance);
+			accountDao.save(account);
+			transaction.setTransactionValue(amount);
+			transaction.setAccountNo(accountNo);
+			transaction.setTransactionDescription("debit transaction");
+			Calendar calendar = Calendar.getInstance();
+			transaction.setTransactionDate(new Timestamp (calendar.getTime().getTime()));
+			transaction.setTransactionType("Debit");
+			transactionDao.save(transaction);			
+			CreditCardAccountforCCPayment(cardNo,payableAmount);
+			return account.getAccountBalance();
+		}
+	}
+	
+	private boolean CreditCardAccountforCCPayment(Long cardNo,Double payableAmount)
+	{
+	
+		
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+		String creditCardNo= Long.toString(cardNo);
+		String creditAmount = Double.toString(payableAmount);		
+		map.add("CreditCardNo", creditCardNo);
+		map.add("CreditAmount", creditAmount);						
+		RestTemplate restTemplate = new RestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		
+		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map , headers);
+		System.out.println("Going to call...CC");
+		ResponseEntity<String> loginResponse = restTemplate
+				  .exchange("http://mydigitalbanking.com:8100/cardservices/payCreditCardBill", HttpMethod.POST, entity, String.class);
+		
+				if (loginResponse.getStatusCode() == HttpStatus.OK) {
+				  System.out.println("Success...Success...Success!!!");
+				  System.out.println(loginResponse.getBody());
+				  return true;
+				}else
+				{
+					return false;
+				}
+	}
+	
+	@Override
+	@Transactional(rollbackFor=Exception.class, propagation = Propagation.NESTED)
 	public double withdrawAmount(Integer accountNo, Double amount) {
 		System.out.println("REQUEST IN SERVICE");
 		Account account = accountDao.findByAccountNo(accountNo);
