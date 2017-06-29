@@ -1,9 +1,9 @@
 applications:
 - name: digitalbanking-accountservice
-  buildpack: https://github.com/caprepo/java-buildpack
+  buildpack: https://github.com/caprepo/java-buildpack.git
   memory: 1024M
   instances: 1
   host: digitalbanking-accountservice
-  disk_quota: 1024M
+  #disk_quota: 1024M
   services:
   - AccountServiceDb
