@@ -24,8 +24,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.capg.accservices.dao.AccountDao;
+import com.capg.accservices.dao.CustomerDao;
 import com.capg.accservices.dao.TransactionDao;
 import com.capg.accservices.model.Account;
+import com.capg.accservices.model.Customer;
 import com.capg.accservices.model.Transaction;
 import com.capg.accservices.service.AccountService;
 
@@ -35,6 +37,9 @@ public class AccountServiceImpl implements AccountService{
 	static Logger logger = Logger.getLogger(AccountServiceImpl.class);
 	@Autowired
 	private AccountDao accountDao;
+	
+	@Autowired
+	private CustomerDao customerDao;
 
 	@Autowired
 	private TransactionDao transactionDao;
@@ -55,6 +60,28 @@ public class AccountServiceImpl implements AccountService{
 		return account;
 	}
 
+	@Override
+	//@Transactional(rollbackFor=Exception.class)
+	public void saveCustomerDetails(Customer customerDetails) {
+		System.out.println("REQUEST IN SERVICE");
+		Customer customer = new Customer();
+		long millis=System.currentTimeMillis();  
+        java.sql.Date date=new java.sql.Date(millis);  
+		customer.setCustomerId(323125);
+		customer.setCustomer_name(customerDetails.getCustomer_name());
+	//	customer.setEmail_id(customerDetails.getEmail_id());		
+		customer.setMobile_no(546454);
+		customer.setPassword(customerDetails.getPassword());
+	//	System.out.println("OUTPUT: "+customerDao.findByCustomerId(556633));
+	/*	customer.setCustomerId(134125);
+		customer.setCustomer_name("Dummy");
+		customer.setEmail_id("sathish@gmail.com");		
+		customer.setMobile_no(4235445); 
+		customer.setPassword("dgsggh");*/
+		
+		customerDao.save(customer);		
+	}
+	
 	@Override
 	@Transactional(rollbackFor=Exception.class)
 	public void depositeAmount(Integer accountNo, Double amount) {
