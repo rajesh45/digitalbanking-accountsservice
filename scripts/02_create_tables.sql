@@ -52,7 +52,7 @@ CREATE TABLE public.account_tansaction
     transaction_id numeric NOT NULL,
     tx_date timestamp with time zone,
     tx_details character varying(200) COLLATE pg_catalog."default",
-    tx_type character varying(3) COLLATE pg_catalog."default",
+    tx_type character varying(300) COLLATE pg_catalog."default",
     account_no numeric(16),
     tx_value numeric(10, 2),
     tx_description character varying(250) COLLATE pg_catalog."default",

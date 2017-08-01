@@ -21,7 +21,7 @@ import org.springframework.messaging.handler.annotation.support.DefaultMessageHa
  * @author mahenata
  *
  */
-public class Application extends SpringBootServletInitializer implements RabbitListenerConfigurer {
+public class Application extends SpringBootServletInitializer  {
 
 	private static Logger log = Logger.getLogger(Application.class);
 
@@ -36,20 +36,20 @@ public class Application extends SpringBootServletInitializer implements RabbitL
 		SpringApplication.run(Application.class, args);
 	}
 	
-	@Bean
+	/*@Bean
 	public MappingJackson2MessageConverter consumerJackson2MessageConverter() {
 		return new MappingJackson2MessageConverter();
-	}
+	}*/
 
-	@Bean
+	/*@Bean
 	public DefaultMessageHandlerMethodFactory messageHandlerMethodFactory() {
 		DefaultMessageHandlerMethodFactory factory = new DefaultMessageHandlerMethodFactory();
 		factory.setMessageConverter(consumerJackson2MessageConverter());
 		return factory;
-	}
+	}*/
 
-	@Override
+	/*@Override
 	public void configureRabbitListeners(final RabbitListenerEndpointRegistrar registrar) {
 		registrar.setMessageHandlerMethodFactory(messageHandlerMethodFactory());
-	}
+	}*/
 }

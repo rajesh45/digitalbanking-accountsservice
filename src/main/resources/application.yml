@@ -9,7 +9,7 @@ spring:
   datasource:
    url : jdbc:postgresql://localhost:5432/db_account
    username : postgres
-   password : admin
+   password : postgres
    driverClassName : org.postgresql.Driver
    testWhileIdle : true
    validationQuery : SELECT 1
